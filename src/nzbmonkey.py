@@ -1387,8 +1387,14 @@ def main():
 
     log = cfg['GENERAL'].get('log')
     if log:
-        logfile = cfg['GENERAL'].get('logpath') 
-        logfile = os.path.expanduser(logfile)
+        nzblogfile = cfg['GENERAL'].get('logpath') 
+        if nzblogfile != None:
+            nzblogfile = os.path.expanduser(nzblogfile)
+            print ('Logging to '+nzblogfile)
+        else:
+            print ("logpath config in [GENERAL] is missing!")
+            log=None
+        
         
     # region Processing Input
     parser = argparse.ArgumentParser()
@@ -1408,8 +1414,8 @@ def main():
         called_by = 'by NZBLNK scheme'
 
         if log:
-            f=open(logfile,'a+')
-            f.write(args.nzblnk[0])
+            f=open(nzblogfile,'a+')
+            f.write(args.nzblnk[0]+'\n')
 
         lnk = urlparse(args.nzblnk[0])
         if lnk.scheme.lower() != 'nzblnk':
