@@ -17,7 +17,7 @@ import webbrowser
 import xml.etree.ElementTree as ET
 from enum import Enum
 from glob import glob
-from os.path import basename, splitext, isfile, join, expandvars
+from os.path import basename, splitext, isfile, join, expandvars, expanduser
 from pathlib import Path
 from time import sleep, time, localtime, strftime
 from unicodedata import normalize
@@ -1385,6 +1385,11 @@ def main():
     else:
         debug_logfile = None
 
+    log = cfg['GENERAL'].get('log')
+    if log:
+        logfile = cfg['GENERAL'].get('logpath') 
+        logfile = os.path.expanduser(logfile)
+        
     # region Processing Input
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--tag', action='store', help='Tag for Releasename')
@@ -1401,6 +1406,10 @@ def main():
 
     if len(args.nzblnk) > 0:
         called_by = 'by NZBLNK scheme'
+
+        if log:
+            f=open(logfile,'a+')
+            f.write(args.nzblnk[0])
 
         lnk = urlparse(args.nzblnk[0])
         if lnk.scheme.lower() != 'nzblnk':
